@@ -1,0 +1,129 @@
+{% extends "base.html" %} {% block title %}Manage Doctors{% endblock %} {% block
+content %}
+<div class="container">
+  <h2 class="mb-4">Manage Doctors</h2>
+
+  <!-- Form to Add a New Doctor -->
+  <form method="POST" class="mb-4">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="mb-3">
+          <label for="name" class="form-label">Doctor Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            name="name"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3">
+          <label for="specialization" class="form-label">Specialization</label>
+          <input
+            type="text"
+            class="form-control"
+            id="specialization"
+            name="specialization"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3">
+          <label for="contact_number" class="form-label">Contact Number</label>
+          <input
+            type="text"
+            class="form-control"
+            id="contact_number"
+            name="contact_number"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3">
+          <label for="available_from" class="form-label">Available From</label>
+          <input
+            type="time"
+            class="form-control"
+            id="available_from"
+            name="available_from"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3">
+          <label for="available_to" class="form-label">Available To</label>
+          <input
+            type="time"
+            class="form-control"
+            id="available_to"
+            name="available_to"
+            required
+          />
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-success">Add Doctor</button>
+  </form>
+
+  <!-- List of Doctors -->
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Name</th>
+          <th>Specialization</th>
+          <th>Contact Number</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for doctor in doctors %}
+        <tr>
+          <td>{{ doctor.name }}</td>
+          <td>{{ doctor.specialization }}</td>
+          <td>{{ doctor.contact_number }}</td>
+          <td>{{ doctor.email }}</td>
+          <td>
+            <!-- Edit Doctor Button -->
+            <a
+              href="{{ url_for('views.edit_doctor', doctor_id=doctor.id) }}"
+              class="btn btn-warning btn-sm"
+            >
+              <i class="fa fa-edit"></i> Edit
+            </a>
+            <!-- Delete Doctor Button -->
+            <form
+              action="{{ url_for('views.delete_doctor', doctor_id=doctor.id) }}"
+              method="POST"
+              style="display: inline"
+            >
+              <button type="submit" class="btn btn-danger btn-sm">
+                <i class="fa fa-trash"></i> Delete
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

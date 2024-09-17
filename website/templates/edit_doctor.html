@@ -1,0 +1,93 @@
+{% extends "base.html" %} {% block title %}Edit Doctor{% endblock %} {% block
+content %}
+<div class="container">
+  <h2 class="mb-4">Edit Doctor Details</h2>
+
+  <form method="POST">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="mb-3">
+          <label for="name" class="form-label">Doctor Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            name="name"
+            value="{{ doctor.name }}"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3">
+          <label for="specialization" class="form-label">Specialization</label>
+          <input
+            type="text"
+            class="form-control"
+            id="specialization"
+            name="specialization"
+            value="{{ doctor.specialization }}"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3">
+          <label for="contact_number" class="form-label">Contact Number</label>
+          <input
+            type="text"
+            class="form-control"
+            id="contact_number"
+            name="contact_number"
+            value="{{ doctor.contact_number }}"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            value="{{ doctor.email }}"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3">
+          <label for="available_from" class="form-label">Available From</label>
+          <input
+            type="time"
+            class="form-control"
+            id="available_from"
+            name="available_from"
+            value="{{ doctor.available_from }}"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3">
+          <label for="available_to" class="form-label">Available To</label>
+          <input
+            type="time"
+            class="form-control"
+            id="available_to"
+            name="available_to"
+            value="{{ doctor.available_to }}"
+            required
+          />
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Update Doctor</button>
+    <a href="{{ url_for('views.manage_doctors') }}" class="btn btn-secondary"
+      >Cancel</a
+    >
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <title>
+      {% block title %}{{ user.is_authenticated and user.role == 'admin' and
+      'Admin Dashboard' or 'WellNavi' }}{% endblock %}
+    </title>
+  </head>
+  <body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#"
+          >WellNavi - Guiding Tomorrow's Health</a
+        >
+        <!-- Display the brand on the left -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbar"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbar">
+          <!-- Align the navigation links to the right -->
+          <ul class="navbar-nav">
+            {% if user.is_authenticated %} {% if user.role == 'admin' %}
+            <!-- Admin-specific links -->
+            {% if request.path == '/admin-sign-up' %}
+            <li class="nav-item">
+              <a class="nav-link" href="/admin-login">Admin Login</a>
+            </li>
+            {% elif request.path == '/admin-login' %}
+            <li class="nav-item">
+              <a class="nav-link" href="/admin-sign-up">Admin Sign Up</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="/manage-users">Manage Users</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/manage-doctors">Manage Doctors</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Logout</a>
+            </li>
+            {% else %}
+            <!-- User-specific links -->
+            <li class="nav-item">
+              <a class="nav-link" href="/predict">Predict</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/doctors">Search & Appoint Doctors</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/">Send Feedback</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Logout</a>
+            </li>
+            {% endif %} {% else %}
+            <!-- Links for non-authenticated users -->
+            {% if request.path == '/admin-sign-up' %}
+            <li class="nav-item">
+              <a class="nav-link" href="/admin-login">Admin Login</a>
+            </li>
+            {% elif request.path == '/admin-login' %}
+            <li class="nav-item">
+              <a class="nav-link" href="/admin-sign-up">Admin Sign Up</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/sign-up">Sign Up</a>
+            </li>
+            {% endif %} {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %}
+    <div
+      class="alert alert-{{ category }} alert-dismissible fade show m-3"
+      role="alert"
+    >
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endfor %} {% endif %} {% endwith %}
+
+    <div class="container mt-4">
+      <!-- Added some top margin for better spacing -->
+      {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white mt-auto py-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <h5>WellNavi</h5>
+            <p>Guiding Tomorrow's Health</p>
+          </div>
+          <div class="col-md-6 text-md-end">
+            <h5>Contact</h5>
+            <p>
+              Email:
+              <a href="mailto:info@wellnavi.com" class="text-white"
+                >info@wellnavi.com</a
+              >
+            </p>
+            <!-- Social media icons -->
+            <div class="social-icons mt-2">
+              <a href="#" class="text-white me-2"
+                ><i class="fa-brands fa-facebook"></i
+              ></a>
+              <a href="#" class="text-white me-2"
+                ><i class="fa-brands fa-twitter"></i
+              ></a>
+              <a href="#" class="text-white"
+                ><i class="fa-brands fa-linkedin"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-12 text-center">
+            <p class="mb-0">
+              &copy; {{ current_year }} WellNavi. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+    {% block javascript %}
+    <script type="text/javascript">
+      function deleteNote(noteId) {
+        fetch("/delete-note", {
+          method: "POST",
+          body: JSON.stringify({ noteId: noteId }),
+        }).then((_res) => {
+          window.location.href = "/";
+        });
+      }
+    </script>
+    {% endblock %}
+  </body>
+</html>
