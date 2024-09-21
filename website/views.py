@@ -107,7 +107,6 @@ def manage_users():
     return render_template('manage_users.html', users=users, user=current_user)
 
 @views.route('/delete_user/<int:user_id>', methods=['POST'])
-@login_required
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
     db.session.delete(user)
@@ -124,7 +123,6 @@ def delete_user(user_id):
 
 # Manage Doctors
 @views.route('/manage_doctors', methods=['GET', 'POST'])
-@login_required
 def manage_doctors():
     if request.method == 'POST':
         name = request.form.get('name')
@@ -161,7 +159,6 @@ def manage_doctors():
     return render_template('manage_doctors.html', doctors=doctors, user=current_user)
 
 @views.route('/edit_doctor/<int:doctor_id>', methods=['GET', 'POST'])
-@login_required
 def edit_doctor(doctor_id):
     doctor = Doctor.query.get_or_404(doctor_id)
     
@@ -243,4 +240,20 @@ def book_appointment(doctor_id):
             flash(f"Invalid date format: {e}. Please use the correct format.", category='error')
     
     return render_template('book_appointment.html', doctor=doctor, user=current_user)
+# Feedback management route
+@views.route('/manage_feedback')
+@login_required
+def manage_feedback():
+    # Query all notes (feedback)
+    notes = Note.query.all()
+    return render_template('manage_feedback.html', notes=notes, user=current_user)
 
+# Route to delete feedback
+@views.route('/delete_feedback/<int:note_id>', methods=['POST'])
+@login_required
+def delete_feedback(note_id):
+    note = Note.query.get_or_404(note_id)
+    db.session.delete(note)
+    db.session.commit()
+    flash('Feedback deleted successfully', category='success')
+    return redirect(url_for('views.manage_feedback'))

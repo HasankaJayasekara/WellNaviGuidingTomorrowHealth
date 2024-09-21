@@ -12,18 +12,29 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
 
+        # Check if the user is a regular user or admin
         user = User.query.filter_by(email=email).first()
+        admin = Admin.query.filter_by(email=email).first()
+
         if user:
             if check_password_hash(user.password, password):
                 flash('Logged in successfully!', category='success')
                 login_user(user, remember=True)
-                return redirect(url_for('views.home'))
+                return redirect(url_for('views.home'))  # Redirect to regular user page
+            else:
+                flash('Incorrect password, try again.', category='error')
+        elif admin:
+            if check_password_hash(admin.password, password):
+                flash('Admin logged in successfully!', category='success')
+                login_user(admin, remember=True)
+                return redirect(url_for('views.manage_users'))  # Redirect to admin dashboard
             else:
                 flash('Incorrect password, try again.', category='error')
         else:
             flash('Email does not exist.', category='error')
 
     return render_template("login.html", user=current_user)
+
 
 @auth.route('/logout')
 @login_required
@@ -61,7 +72,7 @@ def sign_up():
 
     return render_template("sign_up.html", user=current_user)
 
-@auth.route('/admin-sign-up', methods=['GET', 'POST'])
+@auth.route('/admin_sign-up', methods=['GET', 'POST'])
 def admin_sign_up():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -91,7 +102,7 @@ def admin_sign_up():
 
     return render_template("admin_signup.html", user=current_user)
 
-@auth.route('/admin-login', methods=['GET', 'POST'])
+@auth.route('/admin_login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -109,3 +120,8 @@ def admin_login():
             flash('Email does not exist or not an admin.', category='error')
 
     return render_template("admin_login.html", user=current_user)
+@auth.route('/admin_logout')
+@login_required
+def admin_logout():
+    logout_user()  # Logs out the admin user
+    return redirect(url_for('auth.admin_login')) 
