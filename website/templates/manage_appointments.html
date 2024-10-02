@@ -1,0 +1,41 @@
+{% extends "doctorbase.html" %}
+{% block title %}Manage Appointments{% endblock %}
+{% block content %}
+<div class="container">
+  <h2>Manage Appointments</h2>
+  {% if appointments %}
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Patient Name</th>
+          <th>Appointment Date</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for appointment in appointments %}
+          <tr>
+            <td>{{ appointment.user.first_name }}</td>
+            <td>{{ appointment.appointment_date }}</td>
+            <td>{{ appointment.status }}</td>
+            <td>
+              <form method="POST" action="/update_appointment_status/{{ appointment.id }}">
+                <select name="status" class="form-select">
+                  <option value="pending" {% if appointment.status == 'pending' %}selected{% endif %}>Pending</option>
+                  <option value="confirmed" {% if appointment.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                  <option value="completed" {% if appointment.status == 'completed' %}selected{% endif %}>Completed</option>
+                  <option value="canceled" {% if appointment.status == 'canceled' %}selected{% endif %}>Canceled</option>
+                </select>
+                <button type="submit" class="btn btn-success mt-2">Update Status</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No appointments found.</p>
+  {% endif %}
+</div>
+{% endblock %}

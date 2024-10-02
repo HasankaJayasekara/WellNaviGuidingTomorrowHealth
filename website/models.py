@@ -38,6 +38,7 @@ class Doctor(db.Model):
     name = db.Column(db.String(150), nullable=False)
     specialization = db.Column(db.String(150), nullable=False)
     contact_number = db.Column(db.String(15), nullable=False)
+    password = db.Column(db.String(150))
     email = db.Column(db.String(150), unique=True, nullable=False)
 
     # Doctor availability

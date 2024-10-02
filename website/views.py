@@ -1,3 +1,5 @@
+import os
+from werkzeug.security import generate_password_hash
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
 from .models import Appointment, Doctor, User, Note
@@ -5,7 +7,7 @@ from . import db
 import json
 import pickle
 from datetime import datetime
-
+from werkzeug.security import check_password_hash
 views = Blueprint('views', __name__)
 
 # Load the machine learning model for heart disease prediction
@@ -122,34 +124,36 @@ def delete_user(user_id):
 
 
 # Manage Doctors
+
 @views.route('/manage_doctors', methods=['GET', 'POST'])
+@login_required
 def manage_doctors():
     if request.method == 'POST':
         name = request.form.get('name')
         specialization = request.form.get('specialization')
         contact_number = request.form.get('contact_number')
         email = request.form.get('email')
+        password = request.form.get('password', os.urandom(16).hex())  # Generate random password if not provided
 
         # Convert the form string values to Python time objects
         available_from_str = request.form.get('available_from')
         available_to_str = request.form.get('available_to')
 
-        # Convert string to time object
         available_from = datetime.strptime(available_from_str, '%H:%M').time()
         available_to = datetime.strptime(available_to_str, '%H:%M').time()
-        
 
-        # Ensure all required fields are provided
         if not all([name, specialization, contact_number, email, available_from, available_to]):
             flash('All fields are required', category='error')
         else:
+            hashed_password = generate_password_hash(password, method='pbkdf2:sha256')  # Hash the password
             new_doctor = Doctor(
                 name=name, 
                 specialization=specialization, 
                 contact_number=contact_number, 
                 email=email, 
-                available_from=available_from,  # New line
-                available_to=available_to  # New line
+                password=hashed_password,  # Store the hashed password
+                available_from=available_from,
+                available_to=available_to
             )
             db.session.add(new_doctor)
             db.session.commit()
@@ -172,6 +176,11 @@ def edit_doctor(doctor_id):
         # Get available_from and available_to from the form and convert to time object
         available_from_str = request.form.get('available_from')
         available_to_str = request.form.get('available_to')
+
+         # Check if a new password is provided
+        new_password = request.form.get('password')
+        if new_password:  # If a new password is entered, hash it
+            doctor.password = generate_password_hash(new_password, method='pbkdf2:sha256')
 
         try:
             # Use only hours and minutes (ignore any seconds that may be passed)
@@ -257,3 +266,29 @@ def delete_feedback(note_id):
     db.session.commit()
     flash('Feedback deleted successfully', category='success')
     return redirect(url_for('views.manage_feedback'))
+
+
+@views.route('/doctor_login', methods=['GET', 'POST'])
+def doctor_login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        doctor = Doctor.query.filter_by(email=email).first()
+        if doctor and check_password_hash(doctor.password, password):  # Verify hashed password
+            flash('Login successful', category='success')
+            # Logic to log in the doctor and redirect to the dashboard
+            return redirect(url_for('views.manage_appointments'))
+        else:
+            flash('Invalid credentials', category='error')
+
+    return render_template('doctor_login.html', doctor=current_user)
+
+
+@views.route('/manage_appointments', methods=['GET', 'POST'])
+@login_required
+def manage_appointments():
+    doctor = current_user  # Assuming doctor login handled similarly to User login
+    appointments = Appointment.query.filter_by(doctor_id=doctor.id).all()
+    return render_template('manage_appointments.html', appointments=appointments,doctor=doctor)
+
