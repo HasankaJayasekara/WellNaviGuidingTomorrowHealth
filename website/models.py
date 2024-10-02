@@ -28,6 +28,7 @@ class Admin(db.Model, UserMixin):
     email = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
     name = db.Column(db.String(150), nullable=False)
+    is_admin = db.Column(db.Boolean, default=True)
 
     # Admin-specific roles can be added here later if necessary.
 

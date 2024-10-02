@@ -1,81 +1,22 @@
 {% extends "adminbase.html" %} {% block title %}Manage Feedback{% endblock %} {%
 block content %}
-<h3>Manage Feedback</h3>
-
-{% if notes %}
-<table class="table">
-  <thead>
-    {% extends "adminbase.html" %} {% block title %}Manage Feedback{% endblock
-    %} {% block content %}
-    <h3>Manage Feedback</h3>
-
-    {% if notes %}
-    <table class="table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Feedback</th>
-          <th>User ID</th>
-          <th>Date</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for note in notes %}
-        <tr>
-          <td>{{ note.id }}</td>
-          <td>{{ note.data }}</td>
-          <td>{{ note.user_id }}</td>
-          <td>{{ note.date.strftime('%Y-%m-%d %H:%M') }}</td>
-          <td>
-            <form
-              action="{{ url_for('views.delete_feedback', note_id=note.id) }}"
-              method="POST"
-              style="display: inline"
-              onsubmit="return confirm('Are you sure you want to delete this feedback?');"
-            >
-              <button type="submit" class="btn btn-danger btn-sm">
-                Delete
-              </button>
-            </form>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% else %}
-    <p>No feedback found.</p>
-    {% endif %} {% endblock %}
-
-    <tr>
-      <th>ID</th>
-      <th>User</th>
-      <th>Feedback</th>
-      <th>Date</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for note in notes %}
-    <tr>
-      <td>{{ note.id }}</td>
-      <td>{{ note.user.first_name }} ({{ note.user.email }})</td>
-      <td>{{ note.data }}</td>
-      <td>{{ note.date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-      <td>
-        <form
-          action="{{ url_for('views.delete_note', note_id=note.id) }}"
-          method="POST"
-          style="display: inline"
-          onsubmit="return confirm('Are you sure you want to delete this feedback?');"
-        >
-          <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-        </form>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% else %}
-<p>No feedback found.</p>
+<h1 class="text-center">Manage Feedback</h1>
+<ul class="list-group list-group-flush">
+  {% for note in notes %}
+  <li class="list-group-item">
+    <strong>User ID: {{ note.user_id }}</strong> - {{ note.data }}
+    <form
+      method="POST"
+      action="{{ url_for('views.delete_feedback', note_id=note.id) }}"
+      style="display: inline"
+    >
+      <button type="submit" class="close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </form>
+  </li>
+  {% endfor %}
+</ul>
+{% if not notes %}
+<p class="text-center">No feedback available.</p>
 {% endif %} {% endblock %}

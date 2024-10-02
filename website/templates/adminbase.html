@@ -30,7 +30,7 @@
           id="navbarNav"
         >
           <ul class="navbar-nav">
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.is_admin %}
             <li class="nav-item">
               <a class="nav-link" href="/manage_users">Manage Users</a>
             </li>
@@ -92,7 +92,7 @@
           </div>
         </div>
         <div class="text-center mt-3">
-          <p>&copy; {{ current_year }} WellNavi Admin. All rights reserved.</p>
+          <p>&copy; 2024 WellNavi Admin. All rights reserved.</p>
         </div>
       </div>
     </footer>

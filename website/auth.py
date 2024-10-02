@@ -18,9 +18,9 @@ def login():
 
         if user:
             if check_password_hash(user.password, password):
-                flash('Logged in successfully!', category='success')
+                #flash('Logged in successfully!', category='success')
                 login_user(user, remember=True)
-                return redirect(url_for('views.home'))  # Redirect to regular user page
+                return redirect(url_for('views.predict'))  # Redirect to regular  page
             else:
                 flash('Incorrect password, try again.', category='error')
         elif admin:
@@ -67,8 +67,8 @@ def sign_up():
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
-            flash('Account created!', category='success')
-            return redirect(url_for('views.home'))
+            #flash('Account created!', category='success')
+            return redirect(url_for('views.predict'))
 
     return render_template("sign_up.html", user=current_user)
 
